@@ -1,0 +1,30 @@
+---
+  - name: Create users
+    become: True
+    user:
+      name: "{{ item.name }}"
+      state: present
+      append: yes
+      groups: "{{ item.groups|default([]) }}"
+      ssh_key_bits: 4096
+      generate_ssh_key: true
+      shell: "{{ item.shell|default('/usr/sbin/nologin') }}"
+    with_items: "{{ users_to_create }}"
+
+  - name: Set sudo privileges
+    become: True
+    when: item.sudo is defined
+    lineinfile:
+      path: /etc/sudoers
+      state: present
+      regexp: "^{{ item.name }}.*"
+      line: "{{ item.sudo }}"
+    with_items: "{{ users_to_create }}"
+
+  - name: Add authorized_keys
+    become: True
+    authorized_key:
+      user: "{{ item.0.name }}"
+      key: "{{ item.1.key }}"
+      key_options: "{{ item.1.options }}"
+    loop: "{{ users_to_create|subelements('authorized_keys', {'skip_missing': True}) }}"

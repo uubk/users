@@ -1,0 +1,10 @@
+users_to_create: []
+#   - name: foo
+#     groups:
+#       - foo group
+#     shell: /bin/bash
+#     authorized_keys:
+#       - options: 'no-port-forwarding,no-X11-forwarding,no-pty'
+#         key: "ssh-rsa some key user@host"
+#     sudo: |
+#       foo ALL=NOPASSWD: ALL
